@@ -94,8 +94,8 @@ body {
 }
 
 .scroll-reveal {
-    opacity: 0;
-    transform: translateY(40px);
+    opacity: 1; /* Debug: forced visible */
+    transform: translateY(0);
     transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 

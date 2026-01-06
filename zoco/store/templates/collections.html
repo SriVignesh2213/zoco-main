@@ -18,10 +18,10 @@
     <!-- Announcement Bar -->
     <div class="announcement-bar">
         <div class="animate-slide">
-            <span class="announcement-text">Free Express Shipping on All Prepaid
-                Orders | Cash on Delivery Available</span>
-            <span class="announcement-text">Free Express Shipping on All Prepaid
-                Orders | Cash on Delivery Available</span>
+            <span class="announcement-text">Free Express Shipping on All Prepaid Orders | Cash on Delivery
+                Available</span>
+            <span class="announcement-text">Free Express Shipping on All Prepaid Orders | Cash on Delivery
+                Available</span>
         </div>
     </div>
 
@@ -49,18 +49,9 @@
 
     <!-- Navigation Links -->
     <div class="nav-links-bar">
-        <a href="{% url 'home' %}" class="nav-link">
-            New Arrivals
-            <span class="nav-link-underline"></span>
-        </a>
-        <a href="{% url 'collections' %}" class="nav-link">
-            Collections
-            <span class="nav-link-underline"></span>
-        </a>
-        <a href="{% url 'story' %}" class="nav-link">
-            Our Story
-            <span class="nav-link-underline"></span>
-        </a>
+        <a href="{% url 'home' %}" class="nav-link">New Arrivals<span class="nav-link-underline"></span></a>
+        <a href="{% url 'collections' %}" class="nav-link">Collections<span class="nav-link-underline"></span></a>
+        <a href="{% url 'story' %}" class="nav-link">Our Story<span class="nav-link-underline"></span></a>
     </div>
 
     <!-- Header Section -->
@@ -68,17 +59,19 @@
         <div class="section-container" style="padding: 0 2rem; text-align: center;">
             <span class="product-category scroll-reveal block" style="margin-bottom: 1rem;">Seasonal Edit 2026</span>
             <h1 class="section-title font-heading scroll-reveal" style="font-size: 3.75rem;">The Dress Collection</h1>
-            <p class="section-subtitle scroll-reveal" style="margin: 0 auto; max-width: 36rem;">"Effortless elegance
-                for every moment. Simply hover over an image to add it to your selection."</p>
+            <p class="section-subtitle scroll-reveal" style="margin: 0 auto; max-width: 36rem;">"Effortless elegance for
+                every moment. Simply hover over an image to add it to your selection."</p>
         </div>
     </header>
 
     <!-- Products Grid -->
     <main class="section-container" style="padding: 5rem 2rem;">
         <div id="productGrid" class="collections-grid">
-            <!-- Products will be injected here -->
+            <div style="grid-column: 1/-1; text-align: center; color: red; font-size: 12px; margin-bottom: 20px;">
+                DEBUG MODE: Loaded {{ products|length }} products from backend.
+            </div>
             {% for product in products %}
-            <div class="product-card scroll-reveal">
+            <div class="product-card scroll-reveal" style="opacity: 1 !important; transform: none !important;">
                 <div class="product-image-container aspect-4-5 bg-rose-50 shadow-sm relative group">
                     <img src="{{ product.image.url }}" class="product-img" alt="{{ product.name }}">
                     {% if product.is_new %}
@@ -99,6 +92,13 @@
                     <p class="product-price">₹{{ product.price }}</p>
                 </div>
             </div>
+            {% empty %}
+            <div class="col-span-full text-center py-20" style="grid-column: 1 / -1; width: 100%; padding: 5rem 0;">
+                <h3 class="font-heading text-2xl text-midnight mb-4" style="font-size: 1.5rem; margin-bottom: 1rem;">
+                    Collection Coming Soon</h3>
+                <p class="text-gray-500 italic" style="color: #6b7280;">We are curating the finest selection for you.
+                    Please check back later.</p>
+            </div>
             {% endfor %}
         </div>
     </main>
@@ -106,7 +106,6 @@
     <!-- Cart Overlay & Drawer -->
     <div id="cartOverlay" onclick="toggleCart()" class="overlay-bg"></div>
     <div id="cartDrawer" class="drawer closed custom-scrollbar">
-
         <div
             style="padding: 3rem 2.5rem; border-bottom: 1px solid var(--color-rose-50); display: flex; align-items: center; justify-content: space-between;">
             <div>
@@ -148,9 +147,7 @@
                         style="font-size: 1.5rem; font-weight: bold; color: var(--color-midnight);">₹0.00</span>
                 </div>
             </div>
-            <button class="btn-primary">
-                Complete Selection
-            </button>
+            <button class="btn-primary">Complete Selection</button>
         </div>
     </div>
 
@@ -176,36 +173,37 @@
                     class="search-input">
             </div>
             <div id="searchResults" class="custom-scrollbar"
-                style="margin-top: 2.5rem; max-height: 60vh; overflow-y: auto;">
-                <!-- Results injected here -->
-            </div>
+                style="margin-top: 2.5rem; max-height: 60vh; overflow-y: auto;"></div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <!-- Dynamic Products Data for JS functionality -->
     <script>
         const products = [
             {% for product in products %}
         {
             id: { { product.id } },
             name: "{{ product.name|escapejs }}",
-                price: { { product.price } },
+                price: { { product.price | floatform: 0 } },
             img: "{{ product.image.url }}",
                 category: "{{ product.category|escapejs }}",
                     isNew: { { product.is_new | yesno: "true,false" } }
-        },
+        } {% if not forloop.last %}, {% endif %}
         {% endfor %}
         ];
 
         // Scroll Reveal Logic
-        const observerOptions = { threshold: 0.15 };
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-            });
-        }, observerOptions);
-        document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        document.addEventListener('DOMContentLoaded', () => {
+            const observerOptions = { threshold: 0.1 };
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, observerOptions);
+            document.querySelectorAll('.scroll-reveal').forEach(el => observer.observe(el));
+        });
     </script>
     <script src="{% static 'js/script.js' %}"></script>
 </body>

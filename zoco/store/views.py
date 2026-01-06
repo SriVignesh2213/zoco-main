@@ -8,6 +8,7 @@ def home(request):
 
 def collections(request):
     products = product.objects.all()
+    print(f"DEBUG: Collections view called. Found {products.count()} products.")
     return render(request, 'collections.html', {'products': products})
 
 def story(request):
